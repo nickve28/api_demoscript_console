@@ -1,0 +1,35 @@
+---
+authentication_token:
+  test:
+    action: api_test
+  wrong_test:
+    action: api_test_invalid
+
+urls:
+  api: http://api_example:8080/api
+  #api: http://localhost:49160/api
+
+
+actions:
+  -
+    description: get products
+    actions:
+      -
+        type: print
+        value:  get products - authenticated
+        domain: api
+        method: get
+        url: /products
+        options:
+          auth_type: authentication_token
+          auth_user: wrong_test
+          expect_error: true
+      -
+        type: print
+        value:  get products - authenticated
+        domain: api
+        method: get
+        url: /products
+        options:
+          auth_type: authentication_token
+          auth_user: test

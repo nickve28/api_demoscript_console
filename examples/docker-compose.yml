@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  api_example:
+    build: ./express_docker/
+    ports:
+      - 8080:8080
+  api_demo:
+    build: .
+    depends_on:
+      - api_example
+    links:
+      - api_example
