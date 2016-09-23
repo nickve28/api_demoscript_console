@@ -143,9 +143,12 @@ class Demo
   end
 
   private def headers_for(action)
-    options = action['options']
+    options = action['options'] || {}
     user = options['auth_user']
-    if options['auth_type'] == 'basic_auth' then
+
+    if !options['auth_type'] then
+      {"headers" => { "Content-Type" => "application/json"} }
+    elsif options['auth_type'] == 'basic_auth' then
       user_config = @config['basic_auth'][user]
       {"headers" => { "Content-Type" => "application/json"}, "user" => user_config['user'], "password" => user_config['password' ] }
     else
