@@ -28,6 +28,7 @@ class Demo
       action_desc = action['description']
       puts "#{i}:#{" " * (5 - i.to_s.length)}#{action_desc}"
     end
+    puts "Current action: #{@current_action + 1}".yellow
   end
 
   def nextAction
@@ -170,6 +171,14 @@ class Demo
     puts 'Press enter to continue, or b to go back to the menu'
     input = gets.chomp || ""
     to_menu if input == 'b'
+
+    extended_description = action_config['extended_description']
+    if extended_description then
+      puts extended_description.light_cyan
+      puts "\n"
+      puts "Press enter to continue\n"
+      gets
+    end
 
     action_config['actions'].each do |action|
       if (action['type'] == 'prompt') then
