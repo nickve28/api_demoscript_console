@@ -72,8 +72,11 @@ class Demo
         verify_ssl: verify_ssl,
         user: options['user'],
         password: options['password'],
-        payload: payload.to_json
       }
+      if (method === :get or method === :delete) then
+        rest_payload = rest_payload.merge({payload: payload.to_json})
+      end
+
       response = JSON.parse(RestClient::Request.execute(rest_payload))
       puts "The request returned:\n".light_cyan
       puts JSON.pretty_generate(response).green;
@@ -81,6 +84,10 @@ class Demo
     rescue Exception => e
       puts "An unexpected error happened! \n".red unless expectError
       puts "Error: #{e}".red
+      if e.respond_to?(:response) then
+        parsed_response = JSON.parse(e.response) rescue {}
+        puts JSON.pretty_generate(parsed_response).red #new
+      end
     end
   end
 
