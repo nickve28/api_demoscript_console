@@ -124,7 +124,8 @@ class Demo
     url_params = action['url_params'] || []
     url_params.each do |url_param|
       replace_regex = /{#{url_param}}/
-      url = url.gsub(replace_regex, instance_variable_get("@#{url_param}"))
+      value = instance_variable_get("@#{url_param}") || ""
+      url = url.gsub(replace_regex, value)
     end
 
     payload = action['payload'] || {}
