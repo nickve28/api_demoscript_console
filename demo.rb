@@ -22,6 +22,7 @@ class Demo
     nextAction
   end
 
+  private
   def print_action
     @actions.each.with_index do |action, i|
       action_desc = action['description']
@@ -91,10 +92,12 @@ class Demo
     end
   end
 
-  private def prompt(action)
+  def prompt(action)
     puts action['value'].light_cyan
     puts "\n"
-    puts "Press enter to continue\n"
+    puts 'Press enter to continue, or b to go back to the menu'
+    input = gets.chomp || ""
+    to_menu if input == 'b'
 
     action['prompt'].each do |val|
       current_val = instance_variable_get("@#{val}")
@@ -104,11 +107,18 @@ class Demo
     end
   end
 
-  private def print(action, headers)
+  def to_menu
+    @current_action -= 1
+    nextAction
+  end
+
+  def print(action, headers)
     puts action['value'].light_cyan
     puts "\n"
-    puts "Press enter to continue\n"
-    gets
+    puts "Press enter to continue, or b to go back to the menu\n"
+
+    input = gets.chomp || ""
+    to_menu if input == 'b'
 
     domain = action['domain']
     base_url = @config['urls'][domain]
@@ -131,9 +141,7 @@ class Demo
     payload = action['payload'] || {}
     method = action['method'].to_sym
     if (action['query_params']) then
-      qs = action['query_params'].map do |key, value|
-        "#{key}=#{value}"
-      end.join('&')
+      qs = URI.encode_www_form(action['query_params'])
       url << "?" << qs
     end
 
@@ -142,7 +150,7 @@ class Demo
     perform_request(method, url, payload, options)
   end
 
-  private def headers_for(action)
+  def headers_for(action)
     options = action['options'] || {}
     user = options['auth_user']
 
@@ -159,8 +167,9 @@ class Demo
 
   def run_action(action_config)
     puts action_config['description'].yellow
-    puts 'Press enter to continue'
-    gets
+    puts 'Press enter to continue, or b to go back to the menu'
+    input = gets.chomp || ""
+    to_menu if input == 'b'
 
     action_config['actions'].each do |action|
       if (action['type'] == 'prompt') then
